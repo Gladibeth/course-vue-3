@@ -71,7 +71,7 @@ const app = Vue.createApp({
     addFavorite(){
       this.result.lastRequest = new Date();
       this.favorites.set(this.result.login, this.result);
-      this.updateStorage();
+      this.updateFavorite();
     },
 
     removeFavorite(){
