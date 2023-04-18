@@ -38,13 +38,13 @@
             <!-- Result -->
             <Transition>
                 <div class="result" v-if="result">
-                    <a v-if="isFavorite" href="#" class="result__toggle-favorite" @click="removeFavorite">remove Favorite ⭐️</a>
+                    <a v-if="isFavorite" href="#" class="result__toggle-favorite" @click="removeFavorite">Remove Favorite
+                        ⭐️</a>
                     <a v-else href="#" class="result__toggle-favorite" @click="addFavorite">Add Favorite ⭐️</a>
                     <h2 class="result__name">{{ result.name }}</h2>
                     <img v-bind:src="result.avatar_url" :alt="result.name" class="result__avatar">
-                    <p class="result__bio">{{ result.bio }}</p>
-                        <br>
-                        <a :href="result.blog" class="result__blog" target="_blank">{{ result.blog }}</a>
+                    <p class="result__bio">{{ result.bio }} <br>
+                        <a v-bind:href="result.blog" target="_blank" class="result__blog">{{ result.blog }}</a>
                     </p>
                 </div>
             </Transition>
@@ -53,6 +53,7 @@
         </article>
     </div>
     <script src="js/main.js"></script>
+    <script></script>
 
     <script>
         const mountApp = app.mount('#app');

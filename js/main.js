@@ -30,43 +30,48 @@ const app = Vue.createApp({
   },
 
   methods: {
-    async doSearch(){
-      this.result = this.error = null;
-
-      const foundInFavorites = this.favorites.get(this.search)
+    async doSearch() {
+      const foundInFavorites = this.favorites.get(this.search);
 
       const shouldRequestAgain = (() => {
         if (!!foundInFavorites) {
-          const { lastRequestTime } = foundInFavorites
-          const now = Date.now()
-          return (now - lastRequestTime) > requestMaxTimeMs
+          const { lastRequest } = foundInFavorites;
+          return (
+            new Date().getTime() - new Date(lastRequest).getTime() >
+            requestMaxTimeMs
+          );
         }
-        return false
-      })() // IIFE
+        return false;
+      })(); // IIFE
 
       if (!!foundInFavorites && !shouldRequestAgain) {
-        console.log("Found and we use the cached version")
-        return this.result = foundInFavorites
+        console.log('Found and we use the cached version');
+        return (this.result = foundInFavorites);
       }
-      try{
-        console.log("Not found or cached version is too old")
-        const response = await fetch(API + this.search)
-        if (!response.ok) throw new Error("User not found")
-        const data = await response.json()
-        console.log(data)
-        this.result = data
-        foundInFavorites.lastRequestTime = Date.now()
-      }catch(error){
+
+      await this.doRequest()
+      if (foundInFavorites) foundInFavorites.lastRequest = new Date();
+    },
+
+    async doRequest() {
+      try {
+        console.log('Not found or cached version is too old');
+        this.result = this.error = null;
+        const response = await fetch(API + this.search);
+        if (!response.ok) throw new Error('User not found');
+        const data = await response.json();
+        this.result = data;
+      } catch (error) {
         this.error = error;
-      }finally{
+      } finally {
         this.search = null;
       }
     },
 
     addFavorite(){
-      this.result.lastRequestTime = Date.now();
-      this.favorites.set(this.result.login.toLowerCase(), this.result);
-      this.updateFavorite();
+      this.result.lastRequest = new Date();
+      this.favorites.set(this.result.login, this.result);
+      this.updateStorage();
     },
 
     removeFavorite(){
